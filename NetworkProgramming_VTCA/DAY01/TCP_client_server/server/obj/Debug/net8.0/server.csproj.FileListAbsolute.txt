@@ -1,0 +1,28 @@
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/bin/Debug/net8.0/server
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/bin/Debug/net8.0/server.deps.json
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/bin/Debug/net8.0/server.runtimeconfig.json
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/bin/Debug/net8.0/server.dll
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/bin/Debug/net8.0/server.pdb
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/server.GeneratedMSBuildEditorConfig.editorconfig
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/server.AssemblyInfoInputs.cache
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/server.AssemblyInfo.cs
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/server.csproj.CoreCompileInputs.cache
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/server.dll
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/refint/server.dll
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/server.pdb
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/server.genruntimeconfig.cache
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/server/obj/Debug/net8.0/ref/server.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\bin\Debug\net8.0\server.exe
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\bin\Debug\net8.0\server.deps.json
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\bin\Debug\net8.0\server.runtimeconfig.json
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\bin\Debug\net8.0\server.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\bin\Debug\net8.0\server.pdb
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\server.AssemblyInfoInputs.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\server.AssemblyInfo.cs
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\server.csproj.CoreCompileInputs.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\server.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\refint\server.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\server.pdb
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\server.genruntimeconfig.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\NetworkProgramming_VTCA\DAY01\client_server\server\obj\Debug\net8.0\ref\server.dll

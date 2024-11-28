@@ -1,0 +1,14 @@
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/bin/Debug/net8.0/udp_client
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/bin/Debug/net8.0/udp_client.deps.json
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/bin/Debug/net8.0/udp_client.runtimeconfig.json
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/bin/Debug/net8.0/udp_client.dll
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/bin/Debug/net8.0/udp_client.pdb
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/udp_client.GeneratedMSBuildEditorConfig.editorconfig
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/udp_client.AssemblyInfoInputs.cache
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/udp_client.AssemblyInfo.cs
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/udp_client.csproj.CoreCompileInputs.cache
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/udp_client.dll
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/refint/udp_client.dll
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/udp_client.pdb
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/udp_client.genruntimeconfig.cache
+/Users/mac/Documents/template_can_delete/lap_trinh_mang/udp_client/obj/Debug/net8.0/ref/udp_client.dll

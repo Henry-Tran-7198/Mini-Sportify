@@ -1,0 +1,14 @@
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\BT1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\BT1.AssemblyInfoInputs.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\BT1.AssemblyInfo.cs
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\BT1.csproj.CoreCompileInputs.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\bin\Debug\net8.0\BT1.exe
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\bin\Debug\net8.0\BT1.deps.json
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\bin\Debug\net8.0\BT1.runtimeconfig.json
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\bin\Debug\net8.0\BT1.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\bin\Debug\net8.0\BT1.pdb
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\BT1.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\refint\BT1.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\BT1.pdb
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\BT1.genruntimeconfig.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\DAY07\BT1\obj\Debug\net8.0\ref\BT1.dll

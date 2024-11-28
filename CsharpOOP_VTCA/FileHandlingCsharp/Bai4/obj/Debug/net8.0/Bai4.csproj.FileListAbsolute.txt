@@ -1,0 +1,14 @@
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\Bai4.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\Bai4.AssemblyInfoInputs.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\Bai4.AssemblyInfo.cs
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\Bai4.csproj.CoreCompileInputs.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\bin\Debug\net8.0\Bai4.exe
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\bin\Debug\net8.0\Bai4.deps.json
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\bin\Debug\net8.0\Bai4.runtimeconfig.json
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\bin\Debug\net8.0\Bai4.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\bin\Debug\net8.0\Bai4.pdb
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\Bai4.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\refint\Bai4.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\Bai4.pdb
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\Bai4.genruntimeconfig.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOPVTCA\FileHandlingCsharp\Bai4\obj\Debug\net8.0\ref\Bai4.dll

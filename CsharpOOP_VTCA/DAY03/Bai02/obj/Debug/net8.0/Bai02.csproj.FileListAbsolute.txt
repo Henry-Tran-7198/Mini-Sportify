@@ -1,0 +1,14 @@
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\Bai02.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\Bai02.AssemblyInfoInputs.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\Bai02.AssemblyInfo.cs
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\Bai02.csproj.CoreCompileInputs.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\bin\Debug\net8.0\Bai02.exe
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\bin\Debug\net8.0\Bai02.deps.json
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\bin\Debug\net8.0\Bai02.runtimeconfig.json
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\bin\Debug\net8.0\Bai02.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\bin\Debug\net8.0\Bai02.pdb
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\Bai02.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\refint\Bai02.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\Bai02.pdb
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\Bai02.genruntimeconfig.cache
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\CsharpOOP\DAY03\Bai02\obj\Debug\net8.0\ref\Bai02.dll
