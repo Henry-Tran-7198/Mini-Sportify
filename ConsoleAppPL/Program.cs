@@ -175,21 +175,36 @@ class Program
     static void ShowArtistMenu(User user)
     {
         bool running = true;
+        ArtistService artistService = new ArtistService();
+        SongService songService = new SongService();
         while(running)
         {
             Console.Clear();
             Console.WriteLine($"╔══════════════════════════════════╗");
             Console.WriteLine($"║ Artist Menu - {user.UserName,-13}║");
             Console.WriteLine($"╚══════════════════════════════════╝");
-            Console.WriteLine("1. Upload Song");
-            Console.WriteLine("2. View My Songs");
-            Console.WriteLine("3. Logout");
+            Console.WriteLine("1. Register basic information");
+            Console.WriteLine("2. Upload Song");
+            Console.WriteLine("3. Upload Playlist");
+            Console.WriteLine("4. View My Songs");
+            Console.WriteLine("0. Logout");
             Console.Write("\nChoose an option: ");
             
             string? choice = Console.ReadLine();
             switch(choice)
             {
-                case "3": running = false; break;
+                case "1":
+                    RegisterArtist(artistService);
+                    break;
+
+                case "2":
+                    UploadSong(songService);
+                    break;
+
+                case "0": 
+                    running = false; 
+                    break;
+
                 default:
                     Console.WriteLine("Feature coming soon!");
                     Console.ReadKey();
@@ -197,6 +212,95 @@ class Program
             }
         }
     }
+
+    static void RegisterArtist(ArtistService artistService)
+    {
+    Console.Clear();
+    Console.WriteLine("Registering a new artist...");
+
+    string? name;
+    do
+    {
+        Console.Write("Enter artist name: ");
+        name = Console.ReadLine();
+    } while (string.IsNullOrWhiteSpace(name));
+
+        DateTime birthDate;
+        while (true)
+        {
+        Console.Write("Enter birth date (YYYY-MM-DD): ");
+        string? input = Console.ReadLine();
+        if (DateTime.TryParse(input, out birthDate))
+        {
+            break;
+        }
+        Console.WriteLine("Invalid date format. Please enter again.");
+        }
+
+        string? topSong;
+        do
+        {
+            Console.Write("Enter top song: ");
+            topSong = Console.ReadLine();
+        } while (string.IsNullOrWhiteSpace(topSong));
+
+        artistService.RegisterArtist(name, birthDate, topSong);
+        Console.WriteLine("\nArtist registered successfully!");
+        Console.ReadKey();
+    }
+
+    static void UploadSong(SongService songService)
+{
+    Console.Clear();
+
+    string? title;
+    do
+    {
+        Console.Write("Enter title of song: ");
+        title = Console.ReadLine();
+    } while (string.IsNullOrWhiteSpace(title));
+
+    int artistId;
+    while (true)
+    {
+        Console.Write("Enter artistId of song: ");
+        if (int.TryParse(Console.ReadLine(), out artistId))
+        {
+            break;
+        }
+        Console.WriteLine("Invalid input. Enter artistId again.");
+    }
+
+    string? album;
+    do
+    {
+        Console.Write("Enter album of song: ");
+        album = Console.ReadLine();
+    } while (string.IsNullOrWhiteSpace(album));
+
+    string? genre;
+    do
+    {
+        Console.Write("Enter genre of song: ");
+        genre = Console.ReadLine();
+    } while (string.IsNullOrWhiteSpace(genre));
+
+    DateTime releaseDate;
+    while (true)
+    {
+        Console.Write("Enter release date (YYYY-MM-DD): ");
+        string? input = Console.ReadLine();
+        if (DateTime.TryParse(input, out releaseDate))
+        {
+            break;
+        }
+        Console.WriteLine("Invalid date format. Please enter again.");
+    }
+
+    songService.UploadSong(title, artistId, album, genre, releaseDate);
+    Console.WriteLine("\nSong uploaded successfully!");
+    Console.ReadKey();
+}
 
     static void ShowListenerMenu(User user)
     {

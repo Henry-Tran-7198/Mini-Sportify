@@ -1,0 +1,12 @@
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/bin/Debug/net8.0/Persistence.deps.json
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/bin/Debug/net8.0/Persistence.dll
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/bin/Debug/net8.0/Persistence.pdb
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/Persistence.GeneratedMSBuildEditorConfig.editorconfig
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/Persistence.AssemblyInfoInputs.cache
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/Persistence.AssemblyInfo.cs
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/Persistence.csproj.CoreCompileInputs.cache
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/Persistence.sourcelink.json
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/Persistence.dll
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/refint/Persistence.dll
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/Persistence.pdb
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/Persistence/obj/Debug/net8.0/ref/Persistence.dll

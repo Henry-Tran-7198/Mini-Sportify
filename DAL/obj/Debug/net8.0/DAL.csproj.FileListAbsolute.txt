@@ -1,0 +1,16 @@
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.csproj.AssemblyReference.cache
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.GeneratedMSBuildEditorConfig.editorconfig
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.AssemblyInfoInputs.cache
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.AssemblyInfo.cs
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.csproj.CoreCompileInputs.cache
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.sourcelink.json
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/bin/Debug/net8.0/DAL.deps.json
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/bin/Debug/net8.0/DAL.dll
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/bin/Debug/net8.0/DAL.pdb
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/bin/Debug/net8.0/Persistence.dll
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/bin/Debug/net8.0/Persistence.pdb
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.csproj.Up2Date
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.dll
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/refint/DAL.dll
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/DAL.pdb
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/DAL/obj/Debug/net8.0/ref/DAL.dll
