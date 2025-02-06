@@ -1,7 +1,7 @@
 using MySql.Data.MySqlClient;
 using System.Security.Cryptography;
 using System.Text;
-using Persistence;
+using Persistence.Models;
 
 namespace DAL;
 
@@ -24,7 +24,10 @@ public class UserDAL
     public User? SignIn(string email, string password)
     {
         using var connection = new MySqlConnection(connectionString);
-        using var command = new MySqlCommand("SELECT * FROM users WHERE userEmail=@email AND userPassword=@password", connection);
+        using var command = new MySqlCommand(
+            "SELECT * FROM users WHERE userEmail=@email AND userPassword=@password",
+            connection
+        );
         
         command.Parameters.AddWithValue("@email", email);
         command.Parameters.AddWithValue("@password", HashPassword(password));
@@ -58,7 +61,8 @@ public class UserDAL
         using var connection = new MySqlConnection(connectionString);
         using var command = new MySqlCommand(
             "INSERT INTO users(userName, userEmail, userPassword, roles) VALUES(@userName, @email, @password, @roles)",
-            connection);
+            connection
+        );
 
         command.Parameters.AddWithValue("@userName", user.UserName);
         command.Parameters.AddWithValue("@email", user.UserEmail);

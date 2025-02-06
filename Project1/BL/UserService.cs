@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 using DAL;
-using Persistence;
+using Persistence.Models;
 
-namespace BL;
+namespace BL.Services;
 
 public class UserService
 {
@@ -18,7 +18,8 @@ public class UserService
         => _emailRegex.IsMatch(email);
 
     public bool IsValidPassword(string password)
-        => password.Length >= 8 && password.Any(char.IsUpper) && password.Any(char.IsLower) && password.Any(char.IsDigit);
+        => password.Length >= 8 && password.Any(char.IsUpper) && 
+           password.Any(char.IsLower) && password.Any(char.IsDigit);
 
     public User? SignIn(string email, string password)
     {
@@ -32,9 +33,6 @@ public class UserService
     {
         if (string.IsNullOrEmpty(userName) || !IsValidEmail(email) || 
             !IsValidPassword(password) || string.IsNullOrEmpty(role))
-            return false;
-
-        if (role != "listener" && role != "artist")
             return false;
 
         var user = new User(userName, email, password, role.ToLower());

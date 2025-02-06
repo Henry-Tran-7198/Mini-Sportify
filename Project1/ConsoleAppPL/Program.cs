@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using BL;
-using Persistence;
+using BL.Services;
+using Persistence.Models;
 
 class Program
 {
@@ -26,32 +26,78 @@ class Program
         return password.ToString();
     }
 
+    private static int ShowMenu(string title, string[] options, string username = "")
+    {
+        int currentSelection = 0;
+        ConsoleKey keyPressed;
+
+        do
+        {
+            Console.Clear();
+            if (string.IsNullOrEmpty(username))
+            {
+                Console.WriteLine("╔═══════════════════════╗");
+                Console.WriteLine($"║     {title,-18}║");
+                Console.WriteLine("╚═══════════════════════╝");
+            }
+            else
+            {
+                int totalWidth = 24 + username.Length; // Base width (24) + dynamic username length
+                int contentLength = title.Length + 3 + username.Length; // title + " - " + username
+                int leftPadding = (totalWidth - contentLength) / 2;
+                
+                string horizontalLine = new string('═', totalWidth);
+                string leftSpace = new string(' ', leftPadding);
+                
+                Console.WriteLine($"╔{horizontalLine}╗");
+                Console.WriteLine($"║{leftSpace}{title} - {username}{new string(' ', totalWidth - contentLength - leftPadding)}║");
+                Console.WriteLine($"╚{horizontalLine}╝");
+            }
+
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (i == currentSelection)
+                    Console.WriteLine($"► {options[i]}");
+                else
+                    Console.WriteLine($"  {options[i]}");
+            }
+
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            keyPressed = keyInfo.Key;
+
+            if (keyPressed == ConsoleKey.UpArrow)
+            {
+                currentSelection--;
+                if (currentSelection < 0)
+                    currentSelection = options.Length - 1;
+            }
+            else if (keyPressed == ConsoleKey.DownArrow)
+            {
+                currentSelection++;
+                if (currentSelection >= options.Length)
+                    currentSelection = 0;
+            }
+
+        } while (keyPressed != ConsoleKey.Enter);
+
+        return currentSelection + 1;
+    }
+
     static void Main(string[] args)
     {
-        UserService userService = new UserService();
+        var userService = new UserService();
         bool running = true;
 
         while(running)
         {
-            Console.Clear();
-            Console.WriteLine("╔═══════════════════════╗");
-            Console.WriteLine("║     Spotify Clone     ║");
-            Console.WriteLine("╚═══════════════════════╝");
-            Console.WriteLine("1. Sign In");
-            Console.WriteLine("2. Sign Up");
-            Console.WriteLine("3. Exit");
-            Console.Write("\nChoose an option: ");
-
-            string? choice = Console.ReadLine();
+            string[] options = { "Sign In", "Sign Up", "Exit" };
+            int choice = ShowMenu("Spotify Clone", options);
+            
             switch(choice)
             {
-                case "1": SignIn(userService); break;
-                case "2": SignUp(userService); break;
-                case "3": running = false; break;
-                default:
-                    Console.WriteLine("Invalid option!");
-                    Console.ReadKey();
-                    break;
+                case 1: SignIn(userService); break;
+                case 2: SignUp(userService); break;
+                case 3: running = false; break;
             }
         }
     }
@@ -98,44 +144,20 @@ class Program
 
         Console.Write("Username: ");
         string? userName = Console.ReadLine();
-        
         Console.Write("Email: ");
         string? email = Console.ReadLine();
-        if (email != null && !userService.IsValidEmail(email))
-        {
-            Console.WriteLine("Invalid email format!");
-            Console.ReadKey();
-            return;
-        }
-
         Console.Write("Password: ");
         string? password = GetMaskedInput();
-        if (password != null && !userService.IsValidPassword(password))
-        {
-            Console.WriteLine("Password must be at least 8 characters long and contain uppercase, lowercase, and numbers!");
-            Console.ReadKey();
-            return;
-        }
 
-        Console.WriteLine("\nSelect your role:");
-        Console.WriteLine("1. Listener");
-        Console.WriteLine("2. Artist");
-        Console.Write("Choose (1-2): ");
-        
-        string? roleChoice = Console.ReadLine();
-        string? role = roleChoice switch
-        {
-            "1" => "listener",
-            "2" => "artist",
-            _ => null
-        };
+        string[] roleOptions = { "Listener", "Artist" };
+        int roleChoice = ShowMenu("Select Role", roleOptions);
+        string role = roleChoice == 1 ? "listener" : "artist";
 
-        if(userName != null && email != null && password != null && role != null)
+        if(userName != null && email != null && password != null)
         {
             if(userService.SignUp(userName, email, password, role))
             {
                 Console.WriteLine("Sign up successful!");
-                Console.WriteLine($"You registered as: {char.ToUpper(role[0]) + role[1..]}");
             }
             else
             {
@@ -149,21 +171,14 @@ class Program
     static void ShowAdminMenu(User user)
     {
         bool running = true;
+        string[] options = { "Manage Users", "Manage Content", "Logout" };
+
         while(running)
         {
-            Console.Clear();
-            Console.WriteLine($"╔═════════════════════════════════╗");
-            Console.WriteLine($"║ Admin Menu - {user.UserName,-14}║");
-            Console.WriteLine($"╚═════════════════════════════════╝");
-            Console.WriteLine("1. Manage Users");
-            Console.WriteLine("2. Manage Content");
-            Console.WriteLine("3. Logout");
-            Console.Write("\nChoose an option: ");
-            
-            string? choice = Console.ReadLine();
+            int choice = ShowMenu("Admin Menu", options, user.UserName);
             switch(choice)
             {
-                case "3": running = false; break;
+                case 3: running = false; break;
                 default:
                     Console.WriteLine("Feature coming soon!");
                     Console.ReadKey();
@@ -175,21 +190,14 @@ class Program
     static void ShowArtistMenu(User user)
     {
         bool running = true;
+        string[] options = { "Upload Song", "View My Songs", "Logout" };
+
         while(running)
         {
-            Console.Clear();
-            Console.WriteLine($"╔══════════════════════════════════╗");
-            Console.WriteLine($"║ Artist Menu - {user.UserName,-13}║");
-            Console.WriteLine($"╚══════════════════════════════════╝");
-            Console.WriteLine("1. Upload Song");
-            Console.WriteLine("2. View My Songs");
-            Console.WriteLine("3. Logout");
-            Console.Write("\nChoose an option: ");
-            
-            string? choice = Console.ReadLine();
+            int choice = ShowMenu("Artist Menu", options, user.UserName);
             switch(choice)
             {
-                case "3": running = false; break;
+                case 3: running = false; break;
                 default:
                     Console.WriteLine("Feature coming soon!");
                     Console.ReadKey();
@@ -201,21 +209,14 @@ class Program
     static void ShowListenerMenu(User user)
     {
         bool running = true;
+        string[] options = { "Browse Songs", "My Playlists", "Logout" };
+
         while(running)
         {
-            Console.Clear();
-            Console.WriteLine($"╔════════════════════════════════════╗");
-            Console.WriteLine($"║ Listener Menu - {user.UserName,-12}║");
-            Console.WriteLine($"╚════════════════════════════════════╝");
-            Console.WriteLine("1. Browse Songs");
-            Console.WriteLine("2. My Playlists");
-            Console.WriteLine("3. Logout");
-            Console.Write("\nChoose an option: ");
-            
-            string? choice = Console.ReadLine();
+            int choice = ShowMenu("Listener Menu", options, user.UserName);
             switch(choice)
             {
-                case "3": running = false; break;
+                case 3: running = false; break;
                 default:
                     Console.WriteLine("Feature coming soon!");
                     Console.ReadKey();
