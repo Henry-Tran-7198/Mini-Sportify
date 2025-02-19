@@ -9,6 +9,8 @@ public class Song
     public string Genre { get; set; } = string.Empty;
     public DateTime? ReleaseDate { get; set; }
 
+    public string ArtistName { get; set; } = string.Empty;
+
     public Song() { }
 
     public Song(string title, int artistId, string album, string genre, DateTime releaseDate)
