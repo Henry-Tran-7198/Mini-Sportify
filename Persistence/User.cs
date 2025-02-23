@@ -1,4 +1,4 @@
-﻿namespace Persistence;
+﻿namespace Persistence.Models;
 
 public class User
 {
