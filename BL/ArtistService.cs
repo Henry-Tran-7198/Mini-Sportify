@@ -6,11 +6,35 @@ namespace BL
 {
     public class ArtistService
     {
-        private ArtistDAL artistDAL = new ArtistDAL(); // Không có dấu "_"
+        private readonly ArtistDAL artistDAL = new ArtistDAL();
 
-        public void RegisterArtist(string name, DateTime birthDate, string topSong)
+        public Artist? GetArtistByUserId(int userId)
         {
-            artistDAL.AddArtist(name, birthDate, topSong);
+            return artistDAL.GetArtistByUserId(userId);
+        }
+
+        public bool IsArtistRegistered(int userId)
+        {
+            return artistDAL.IsArtistRegistered(userId);
+        }
+
+        public bool RegisterArtist(string name, DateTime birthDate, string topSong, int userId)
+        {
+            if (IsArtistRegistered(userId))
+            {
+                return false;
+            }
+
+            artistDAL.AddArtist(name, birthDate, topSong, userId);
+            return true;
+        }
+
+        public Artist? GetArtistByName(string artistName)
+        {
+            if (string.IsNullOrWhiteSpace(artistName))
+                return null;
+                
+            return artistDAL.GetArtistByName(artistName);
         }
 
         public Artist? SearchArtist(int artistId)
@@ -33,7 +57,6 @@ namespace BL
 
         public bool DeleteArtist(int artistId)
         {
-            ArtistDAL artistDAL = new ArtistDAL(); //Tạo 1 đối tượng ArtistDAL để làm việc với database
             bool isDeleted = artistDAL.DeleteArtistById(artistId); //Gọi phương thức DeleteUserById trong UserId
 
             if (isDeleted)
@@ -46,7 +69,6 @@ namespace BL
                 return false;
             }
         }
-
         public List<Artist> GetAllArtists()
         {
             return artistDAL.GetAllArtists();  

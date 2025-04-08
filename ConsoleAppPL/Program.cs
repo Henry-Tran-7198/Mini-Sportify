@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using BL;
 using BL.Services;
-using Persistence.Models;
 using Persistence;
+using Persistence.Models;
 
 class Program
 {
@@ -44,8 +44,8 @@ class Program
             }
             else
             {
-                int totalWidth = 24 + username.Length; // Base width (24) + dynamic username length
-                int contentLength = title.Length + 3 + username.Length; // title + " - " + username
+                int totalWidth = 24 + username.Length;
+                int contentLength = title.Length + 3 + username.Length;
                 int leftPadding = (totalWidth - contentLength) / 2;
                 
                 string horizontalLine = new string('═', totalWidth);
@@ -87,21 +87,17 @@ class Program
 
     private static ArtistService artistService = new ArtistService();
     private static SongService songService = new SongService();
-    private static PlaylistService playlistService = new PlaylistService();
 
     static void Main(string[] args)
     {
         var userService = new UserService();
-        var artistService = new ArtistService();
-        var songService = new SongService();
-        var playlistService = new PlaylistService();
         bool running = true;
 
         while(running)
         {
             string[] options = { "Sign In", "Sign Up", "Exit" };
             int choice = ShowMenu("Mini Spotify", options);
-            
+
             switch(choice)
             {
                 case 1: SignIn(userService); break;
@@ -111,117 +107,262 @@ class Program
         }
         ShowManageArtistsMenu(artistService);
         ShowManageSongsMenu(songService);
-        ShowManagePlaylistsMenu(playlistService);
     }
 
     static void SignIn(UserService userService)
     {
-        Console.Clear();
-        Console.WriteLine("╔════════════════╗");
-        Console.WriteLine("║    Sign In     ║");
-        Console.WriteLine("╚════════════════╝");
-        
-        Console.Write("Email: ");
-        string? email = Console.ReadLine();
-        
-        Console.Write("Password: ");
-        string? password = GetMaskedInput();
-
-        if(email != null && password != null)
+        while (true)
         {
-            User? user = userService.SignIn(email, password);
-            if(user != null)
+            Console.Clear();
+            Console.WriteLine("╔════════════════╗");
+            Console.WriteLine("║    Sign In     ║");
+            Console.WriteLine("╚════════════════╝");
+            
+            Console.Write("Email: ");
+            string? email = "";
+            
+            // Read email with Escape support
+            while (true)
             {
-                switch(user.Roles.ToLower())
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape)
+                    return;
+                if (key.Key == ConsoleKey.Enter)
+                    break;
+                if (key.Key == ConsoleKey.Backspace && email.Length > 0)
                 {
-                    case "admin": 
-                        ShowAdminMenu(user, userService); // 🔹 FIXED: Thêm 'userService'
-                        break;
-
-                    case "artist": 
-                        ShowArtistMenu(user); 
-                        break;
-
-                    case "listener": 
-                        ShowListenerMenu(user); 
-                        break;
-
-                    default:
-                        Console.WriteLine("❌ Unknown role. Access denied!");
-                        Console.ReadKey();
-                        break;
+                    email = email[..^1];
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    email += key.KeyChar;
+                    Console.Write(key.KeyChar);
                 }
             }
-            else
+            Console.WriteLine();
+
+            Console.Write("Password: ");
+            string? password = "";
+            
+            // Read password with Escape support
+            while (true)
             {
-                Console.WriteLine("Invalid credentials!");
-                Console.ReadKey();
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape)
+                    return;
+                if (key.Key == ConsoleKey.Enter)
+                    break;
+                if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+                {
+                    password = password[..^1];
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    password += key.KeyChar;
+                    Console.Write("*");
+                }
+            }
+            Console.WriteLine();
+
+            if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+            {
+                User? user = userService.SignIn(email, password);
+                if (user != null)
+                {
+                    switch(user.Roles.ToLower())
+                    {
+                        case "admin": ShowAdminMenu(user, userService); break;
+                        case "artist": ShowArtistMenu(user); break;
+                        case "listener": ShowListenerMenu(user); break;
+                    }
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("\nInvalid credentials!");
+                    Console.WriteLine("Press any key to try again or Esc to go back...");
+                    if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                        return;
+                }
             }
         }
     }
 
-    
     static void SignUp(UserService userService)
     {
-        Console.Clear();
-        Console.WriteLine("╔════════════════╗");
-        Console.WriteLine("║    Sign Up     ║");
-        Console.WriteLine("╚════════════════╝");
-
-        Console.Write("Username: ");
-        string? userName = Console.ReadLine();
-        
-        Console.Write("Email: ");
-        string? email = Console.ReadLine();
-        if (email != null && !userService.IsValidEmail(email))
+        while (true)
         {
-            Console.WriteLine("Invalid email format!");
-            Console.ReadKey();
-            return;
-        }
+            Console.Clear();
+            Console.WriteLine("╔════════════════╗");
+            Console.WriteLine("║    Sign Up     ║");
+            Console.WriteLine("╚════════════════╝");
 
-        Console.Write("Password: ");
-        string? password = GetMaskedInput();
-        if (password != null && !userService.IsValidPassword(password))
-        {
-            Console.WriteLine("Password must be at least 8 characters long and contain uppercase, lowercase, and numbers!");
-            Console.ReadKey();
-            return;
-        }
-
-        Console.WriteLine("\nSelect your role:");
-        Console.WriteLine("1. Listener");
-        Console.WriteLine("2. Artist");
-        Console.Write("Choose (1-2): ");
-        
-        string? roleChoice = Console.ReadLine();
-        string? role = roleChoice switch
-        {
-            "1" => "listener",
-            "2" => "artist",
-            _ => null
-        };
-
-        if(userName != null && email != null && password != null && role != null)
-        {
-            if(userService.SignUp(userName, email, password, role))
+            
+            // Username input
+            string userName = "";
+            while (true)
             {
-                Console.WriteLine("Sign up successful!");
-                Console.WriteLine($"You registered as: {char.ToUpper(role[0]) + role[1..]}");
+                Console.Write("Username: ");
+                userName = "";
+
+                while (true)
+                {
+                    var key = Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Escape)
+                    return;
+                    if (key.Key == ConsoleKey.Enter && userName.Length > 0)
+                    break;
+                    if (key.Key == ConsoleKey.Backspace && userName.Length > 0)
+                    {
+                        userName = userName[..^1];
+                        Console.Write("\b \b");
+                    }
+                    else if (!char.IsControl(key.KeyChar))
+                    {
+                        userName += key.KeyChar;
+                        Console.Write(key.KeyChar);
+                    }
+                }
+                if (userService.CheckUserNameExists(userName))
+                {
+                    Console.Write("\r"); // Di chuyển con trỏ về đầu dòng
+                    Console.Write(new string(' ', Console.WindowWidth)); // Xóa dòng bằng cách ghi đè bằng dấu cách
+                    Console.Write("\r"); // Di chuyển lại về đầu dòng lần nữa
+                    Console.WriteLine("That Name is already taken. Please choose another one.");
+                    continue;
+                }
+                else
+                {
+                    break; 
+                }
             }
-            else
+            Console.WriteLine();
+
+
+            // Email input  
+            string email = "";
+            while (true)
             {
-                Console.WriteLine("Sign up failed!");
+                Console.Write("Email: ");
+                email = "";
+                while (true)
+                {
+                    var key = Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Escape)
+                        return;
+                    if (key.Key == ConsoleKey.Enter && email.Length > 0)
+                        break;
+                    if (key.Key == ConsoleKey.Backspace && email.Length > 0)
+                    {
+                        email = email[..^1];
+                        Console.Write("\b \b");
+                    }
+                    else if (!char.IsControl(key.KeyChar))
+                    {
+                        email += key.KeyChar;
+                        Console.Write(key.KeyChar);
+                    }
+                }
+                if (userService.CheckUserEmailExists(email))
+                {
+                    Console.Write("\r"); // Di chuyển con trỏ về đầu dòng
+                    Console.Write(new string(' ', Console.WindowWidth)); // Xóa dòng bằng cách ghi đè bằng dấu cách
+                    Console.Write("\r"); // Di chuyển lại về đầu dòng lần nữa
+                    Console.WriteLine("That Email is already taken. Please choose another one.");
+                    continue;
+                }
+                else 
+                {
+                    break;
+                }
             }
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
+            Console.WriteLine();
+
+            // Password input
+            Console.Write("Password: ");
+            string password = "";
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape)
+                    return;
+                if (key.Key == ConsoleKey.Enter && password.Length > 0)
+                    break;
+                if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+                {
+                    password = password[..^1];
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    password += key.KeyChar;
+                    Console.Write("*");
+                }
+            }
+            Console.WriteLine();
+
+            // Role selection
+            Console.WriteLine("\nSelect Role:");
+            string[] roleOptions = { "Listener", "Artist" };
+            int currentSelection = 0;
+            ConsoleKey roleKey;
+
+            do
+            {
+                Console.SetCursorPosition(0, Console.CursorTop - roleOptions.Length);
+                for (int i = 0; i < roleOptions.Length; i++)
+                {
+                    if (i == currentSelection)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    Console.WriteLine($"{(i == currentSelection ? "► " : "  ")}{roleOptions[i]}");
+
+                    Console.ResetColor();
+                }
+
+                roleKey = Console.ReadKey(true).Key;
+
+                switch (roleKey)
+                {
+                    case ConsoleKey.UpArrow:
+                    if (currentSelection > 0) currentSelection--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                    if (currentSelection < roleOptions.Length - 1) currentSelection++;
+                        break;
+                    case ConsoleKey.Escape:
+                        return;
+                }
+            } while (roleKey != ConsoleKey.Enter);
+
+            string role = currentSelection == 0 ? "listener" : "artist";
+
+            if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+            {
+                if (userService.SignUp(userName, email, password, role))
+                {
+                    Console.WriteLine("\nSign up successful!");
+                }
+                else
+                {
+                    Console.WriteLine("\nSign up failed! Email might already be in use.");
+                }
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey(true);
+                return;
+            }
         }
     }
-
+    
     static void ShowAdminMenu(User user, UserService userService)
     {
         bool running = true;
-        string[] options = { "Manage Users", "Manage Artists", "Manage Songs", "Manage Playlists", "Logout" };
+        string[] options = { "Manage Users", "Manage Artists", "Manage Songs", "Logout" };
 
         while(running)
         {
@@ -240,11 +381,7 @@ class Program
                 ShowManageSongsMenu(songService);
                 break;
 
-                case 4:
-                ShowManagePlaylistsMenu(playlistService);
-                break;
-
-                case 5: running = false; break;
+                case 4: running = false; break;
                 default:
                     Console.WriteLine("Feature coming soon!");
                     Console.ReadKey();
@@ -349,7 +486,7 @@ class Program
             }
         }
     }
-
+    
     static void ShowUserDetails(User user)
     {
         Console.Clear();
@@ -374,46 +511,70 @@ class Program
         Console.WriteLine(footer);
     }
 
-
-
     static void ShowAllUsers(UserService userService)
     {
         Console.Clear();
         var users = userService.GetAllUsers();
-
-        Console.WriteLine("╔══════════════════════════════════════════╗");
-        Console.WriteLine("║             📜 All Users                 ║");
-        Console.WriteLine("╚══════════════════════════════════════════╝");
-
         if (users.Count == 0)
         {
             Console.WriteLine("❌ No users found.");
             return;
         }
 
-        // Định dạng bảng
-        string header = "╔══════════╦══════════════════════╦══════════════════════╦══════════╗";
-        string footer = "╚══════════╩══════════════════════╩══════════════════════╩══════════╝";
-    
-        Console.WriteLine(header);
-        Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-8} ║", 
-                    "User ID", "User Name", "Email", "Role");
-        Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╬══════════╣");
+        int currentPage = 0;
+        int itemsPerPage = 10;
+        int totalPages = (int)Math.Ceiling(users.Count / (double)itemsPerPage);
+        ConsoleKey key;
 
-        foreach (var user in users)
+        do
         {
-            Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-8} ║",
-                        user.UserId,
-                        Truncate(user.UserName, 20),
-                        Truncate(user.UserEmail, 20),
-                        Truncate(user.Roles, 8));
-        }
-    
-        Console.WriteLine(footer);
-        Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey();
-    }
+            Console.Clear();
+            Console.WriteLine("╔══════════════════════════════════════════╗");
+            Console.WriteLine("║             📜 All Users                 ║");
+            Console.WriteLine("╚══════════════════════════════════════════╝");
 
+            // Hiển thị bảng
+            string header = "╔══════════╦══════════════════════╦══════════════════════╦══════════╗";
+            string footer = "╚══════════╩══════════════════════╩══════════════════════╩══════════╝";
+
+            Console.WriteLine(header);
+            Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-8} ║",
+                        "User ID", "User Name", "Email", "Role");
+            Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╬══════════╣");
+
+            var pageUser = users.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
+            foreach (var user in pageUser)
+            {
+                Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-8} ║",
+                                   user.UserId,
+                                   Truncate(user.UserName, 20),
+                                   Truncate(user.UserEmail, 20),
+                                   Truncate(user.Roles, 8));
+            }
+            Console.WriteLine(footer);
+            Console.WriteLine($"\nPage {currentPage + 1}/{totalPages}");
+            Console.WriteLine("Use ← → to change pages, Esc to exit");
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.LeftArrow:
+                    if (currentPage > 0)
+                    {
+                        currentPage--;
+                    }
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    if (currentPage < totalPages - 1)
+                    {
+                        currentPage++;
+                    }
+                    break;
+            }
+        } while (key != ConsoleKey.Escape);
+    }
 
     static void ShowManageArtistsMenu(ArtistService artistService)
     {
@@ -498,7 +659,6 @@ class Program
                     Console.ReadKey();
                     break;
 
-
                 case 3:
                     ShowAllArtists(artistService);
                     break;
@@ -564,44 +724,65 @@ class Program
     {
         Console.Clear();
         var artists = artistService.GetAllArtists();
-
-        Console.WriteLine("╔══════════════════════════════════════════╗");
-        Console.WriteLine("║             📜 All Artists               ║");
-        Console.WriteLine("╚══════════════════════════════════════════╝");
-
-        if (artists == null || artists.Count == 0) // Kiểm tra danh sách rỗng
+        if (artists.Count == 0)
         {
-            Console.WriteLine("❌ No artist found.");
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
+            Console.WriteLine("❌ No artists found.");
             return;
         }
 
-        // Định dạng bảng
-        string header = "╔═══════════╦══════════════════════╦══════════════════════╦════════════╗";
-        string footer = "╚═══════════╩══════════════════════╩══════════════════════╩════════════╝";
+        int currentPage = 0;
+        int itemsPerPage = 10;
+        int totalPages = (int)Math.Ceiling(artists.Count / (double)itemsPerPage);
+        ConsoleKey key;
 
-        Console.WriteLine(header);
-        Console.WriteLine("║ {0,-9} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║", 
-        "Artist ID", "Artist Name", "Top Song", "Birth Date");
-        Console.WriteLine("╠═══════════╬══════════════════════╬══════════════════════╬════════════╣");
-
-        // Duyệt qua danh sách nghệ sĩ và in từng dòng
-        foreach (var artist in artists)
+        do
         {
-            Console.WriteLine("║ {0,-9} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║",
-                artist.ArtistId,
-                Truncate(artist.ArtistName, 20),
-                Truncate(artist.TopSong, 20),
-                artist.BirthDate?.ToString("yyyy-MM-dd") ?? "N/A");
-        }
+            Console.Clear();
+            Console.WriteLine("╔══════════════════════════════════════════╗");
+            Console.WriteLine("║             📜 All Artists               ║");
+            Console.WriteLine("╚══════════════════════════════════════════╝");
 
-        Console.WriteLine(footer);
-        Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey();
+            // Hiển thị bảng
+            string header = "╔═══════════╦══════════════════════╦══════════════════════╦════════════╗";
+            string footer = "╚═══════════╩══════════════════════╩══════════════════════╩════════════╝";
+
+            Console.WriteLine(header);
+            Console.WriteLine("║ {0,-9} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║", 
+            "Artist ID", "Artist Name", "Top Song", "Birth Date");
+            var pageArtist = artists.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
+            foreach (var artist in pageArtist)
+            {
+                Console.WriteLine("║ {0,-9} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║",
+                                    artist.ArtistId,
+                                    Truncate(artist.ArtistName, 20),
+                                    Truncate(artist.TopSong, 20),
+                                    artist.BirthDate?.ToString("yyyy-MM-dd") ?? "N/A");
+            }
+            Console.WriteLine(footer);
+            Console.WriteLine($"\nPage {currentPage + 1}/{totalPages}");
+            Console.WriteLine("Use ← → to change pages, Esc to exit");
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.LeftArrow:
+                    if (currentPage > 0)
+                    {
+                        currentPage--;
+                    }
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    if (currentPage < totalPages - 1)
+                    {
+                        currentPage++;
+                    }
+                    break;
+            }
+        } while (key != ConsoleKey.Escape);
     }
-
-
+    
     static void ShowManageSongsMenu(SongService songService)
     {
         bool running = true;
@@ -735,8 +916,8 @@ class Program
             return;
         }
 
-        // Thực hiện xóa nghệ sĩ
-        bool result = songService.DeleteSong(songId);
+        // Thực hiện xóa song
+        bool result = songService.DeleteSong(songId, song.ArtistId);
         if (result)
         {
             Console.WriteLine("\n✅ Song deleted successfully.");
@@ -749,249 +930,84 @@ class Program
         Console.ReadKey();
         return;
     }
-
+    
     static void ShowAllSongs(SongService songService)
     {
         Console.Clear();
         var songs = songService.GetAllSongs();
-
-        Console.WriteLine("╔══════════════════════════════════════════╗");
-        Console.WriteLine("║             📜 All Songs                 ║");
-        Console.WriteLine("╚══════════════════════════════════════════╝");
-
-        if (songs == null || songs.Count == 0) // Kiểm tra danh sách rỗng
+        if (songs.Count == 0)
         {
-            Console.WriteLine("❌ No song found.");
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
+            Console.WriteLine("❌ No songs found.");
             return;
         }
 
-        // Định dạng bảng
-        string header = "╔══════════╦══════════════════════╦══════════════════════╦════════════╗";
-        string footer = "╚══════════╩══════════════════════╩══════════════════════╩════════════╝";
+        int currentPage = 0;
+        int itemsPerPage = 10;
+        int totalPages = (int)Math.Ceiling(songs.Count / (double)itemsPerPage);
+        ConsoleKey key;
 
-        Console.WriteLine(header);
-        Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║", "Song ID", "Title", "Album", "Genre");
-        Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╬════════════╣");
-
-        foreach (var song in songs)
+        do
         {
-            Console.WriteLine("║ {0,-9}║ {1,-20} ║ {2,-20} ║ {3,-10} ║",
-                song.SongId,
-            Truncate(song.Title, 20),
-            Truncate(song.Album, 20),
-            Truncate(song.Genre, 10));
-        }
-        Console.WriteLine(footer);
-        Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey();
-    }
+            Console.Clear();
+            Console.WriteLine("╔══════════════════════════════════════════╗");
+            Console.WriteLine("║             📜 All Songs                 ║");
+            Console.WriteLine("╚══════════════════════════════════════════╝");
 
-    
-    static void ShowManagePlaylistsMenu(PlaylistService playlistService)
-    {
-        bool running = true;
-        string[] userOptions = { "Search Playlist", "Delete Playlist", "Show All Playlists", "Back to Admin Menu" };
+            // Định dạng bảng
+            string header = "╔══════════╦══════════════════════╦══════════════════════╦════════════╗";
+            string footer = "╚══════════╩══════════════════════╩══════════════════════╩════════════╝";
 
-        while (running)
-        {
-            int choice = ShowMenu("Manage Playlists", userOptions, "Admin");
-            switch (choice)
+            Console.WriteLine(header);
+            Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║", "Song ID", "Title", "Album", "Genre");
+            Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╬════════════╣");
+            var pageSong = songs.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
+            foreach (var song in pageSong)
             {
-                case 1:
-                    GetPlaylistById(playlistService);
-                    break;
-                    
-                
-                case 2:
-                    DeletePlaylistById(playlistService);
+                Console.WriteLine("║ {0,-9}║ {1,-20} ║ {2,-20} ║ {3,-10} ║",
+                                song.SongId,
+                                Truncate(song.Title, 20),
+                                Truncate(song.Album, 20),
+                                Truncate(song.Genre, 10));
+            }
+            Console.WriteLine(footer);
+            Console.WriteLine($"\nPage {currentPage + 1}/{totalPages}");
+            Console.WriteLine("Use ← → to change pages, Esc to exit");
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.LeftArrow:
+                    if (currentPage > 0)
+                    {
+                        currentPage--;
+                    }
                     break;
 
-                case 3:
-                    ShowAllPlaylists(playlistService);
-                    break;
-
-                case 4:
-                    running = false;
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Try again!");
-                    Console.ReadKey();
+                case ConsoleKey.RightArrow:
+                    if (currentPage < totalPages - 1)
+                    {
+                        currentPage++;
+                    }
                     break;
             }
-        }
+        } while (key != ConsoleKey.Escape);
     }
-
-    static void GetPlaylistById(PlaylistService playlistService)
-    {
-        Console.Clear();
-        Console.Write("🔍 Enter Playlist ID: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int playlistId))  // Sửa tên biến
-        {
-            Console.WriteLine("❌ Invalid ID! Please enter a number.");
-            Console.ReadKey();
-            return;
-        }
-
-        var playlist = playlistService?.SearchPlaylist(playlistId);  // Kiểm tra null
-        if (playlist == null)
-        {
-            Console.WriteLine("❌ No playlist found.");
-            Console.ReadKey();
-            return;
-        }
-
-        Console.Clear();
-        Console.WriteLine("╔══════════════════════════════════════════╗");
-        Console.WriteLine("║              🔎 Playlist Found           ║");
-        Console.WriteLine("╚══════════════════════════════════════════╝");
-
-        string header = "╔═════════════╦══════════════════════╦══════════════════════╗";
-        string footer = "╚═════════════╩══════════════════════╩══════════════════════╝";
-
-        Console.WriteLine(header);
-        Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║", "Playlist ID", "Playlist", "Title");
-        Console.WriteLine("╠═════════════╬══════════════════════╬══════════════════════╣");
-        
-        foreach (var song in playlist.Songs)
-        {
-            Console.WriteLine("║ {0,-8}    ║ {1,-20} ║ {2,-20} ║",
-            playlist.PlaylistId,
-            Truncate(playlist.PlaylistName, 20),
-            Truncate(song.Title, 20));
-        }
-        Console.WriteLine(footer);
-
-        Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey();
-    }
-
-    static void DeletePlaylistById(PlaylistService playlistService)
-    {
-        Console.Clear();
-        Console.Write("🗑 Enter Playlist ID to delete: ");
-    
-        // Bước 1: Nhập và validate Playlist ID
-        if (!int.TryParse(Console.ReadLine(), out int playlistId))
-        {
-            Console.WriteLine("❌ Invalid ID! Please enter a number.");
-            Console.ReadKey();
-            return;
-        }
-
-        // Bước 2: Tìm playlist để hiển thị thông tin
-        var playlist = playlistService.SearchPlaylist(playlistId);
-        if (playlist == null)
-        {
-            Console.WriteLine("❌ No playlist found with that ID.");
-            Console.ReadKey();
-            return;
-        }
-
-        // Bước 3: Hiển thị thông tin playlist
-        Console.Clear();
-        Console.WriteLine("╔══════════════════════════════════════════╗");
-        Console.WriteLine("║              🔎 Playlist Found           ║");
-        Console.WriteLine("╚══════════════════════════════════════════╝");
-
-        string header = "╔═════════════╦══════════════════════╦══════════════════════╗";
-        string footer = "╚═════════════╩══════════════════════╩══════════════════════╝";
-
-        Console.WriteLine(header);
-        Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║", "Playlist ID", "Playlist", "Title");
-        Console.WriteLine("╠═════════════╬══════════════════════╬══════════════════════╣");
-        
-        foreach (var song in playlist.Songs)
-        {
-            Console.WriteLine("║ {0,-8}    ║ {1,-20} ║ {2,-20} ║",
-            playlist.PlaylistId,
-            Truncate(playlist.PlaylistName, 20),
-            Truncate(song.Title, 20));
-        }
-        Console.WriteLine(footer);
-
-        // Bước 4: Xác nhận xóa
-        Console.Write("\n❓ Are you sure you want to delete this playlist? (Y/N): ");
-        string confirm = Console.ReadLine()?.Trim().ToLower();
-
-        if (confirm != "y")
-        {
-            Console.WriteLine("🚫 Delete canceled.");
-            Console.ReadKey();
-            return;
-        }
-
-        // Bước 5: Thực hiện xóa
-        bool result = playlistService.DeletePlaylist(playlistId);
-        if (result)
-        {
-            Console.WriteLine("\n✅ Playlist deleted successfully.");
-        }
-        else
-        {
-            Console.WriteLine("\n❌ Failed to delete playlist.");
-        }
-        Console.ReadKey();
-    }
-
-    static void ShowAllPlaylists(PlaylistService playlistService)
-    {
-        Console.Clear();
-        var playlists = playlistService.GetAllPlaylists();
-
-        Console.WriteLine("╔══════════════════════════════════════════╗");
-        Console.WriteLine("║             📜 All Playlists             ║");
-        Console.WriteLine("╚══════════════════════════════════════════╝");
-
-        if (playlists == null || playlists.Count == 0) // Kiểm tra danh sách rỗng
-        {
-            Console.WriteLine("❌ No playlist found.");
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
-            return;
-        }
-
-        // Định dạng bảng
-        string header = "╔═════════════╦══════════════════════╦══════════════════════╗";
-        string footer = "╚═════════════╩══════════════════════╩══════════════════════╝";
-
-        Console.WriteLine(header);
-        Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║", "Playlist ID", "Playlist", "Title");
-        Console.WriteLine("╠═════════════╬══════════════════════╬══════════════════════╣");
-        
-        foreach (var playlist in playlists)  // Duyệt qua từng playlist
-        {
-            foreach (var song in playlist.Songs)  // Duyệt qua từng bài hát trong playlist
-            {
-                Console.WriteLine("║ {0,-8}    ║ {1,-20} ║ {2,-20} ║",
-                    playlist.PlaylistId,
-                    Truncate(playlist.PlaylistName, 20),
-                    Truncate(song.Title, 20));
-            }
-        }
-
-        Console.WriteLine(footer);
-        Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey();
-    }
-
+   
 
     static void ShowArtistMenu(User user)
     {
         bool running = true;
         string[] options = { 
-            "Register basic information",
-            "Upload Song", 
-            "Upload Playlist",
+            "Register Information",
+            "Upload Song",
+            "Delete Song", 
             "View My Songs",
             "Logout"
         };
 
         ArtistService artistService = new ArtistService();
         SongService songService = new SongService();
-        PlaylistService playlistService = new PlaylistService();
 
         while(running)
         {
@@ -999,16 +1015,16 @@ class Program
             switch(choice)
             {
                 case 1:
-                    RegisterArtist(artistService);
+                    RegisterArtist(artistService, user);
                     break;
                 case 2:
                     UploadSong(songService);
                     break;
                 case 3:
-                    UploadPlaylist(playlistService);
+                    DeleteSong(songService, artistService, user);
                     break;
                 case 4:
-                    ViewSongs();
+                    ViewMySongs(songService, artistService, user);
                     break;
                 case 5: 
                     running = false;
@@ -1021,11 +1037,100 @@ class Program
         }
     }
 
-    static void RegisterArtist(ArtistService artistService)
+// Add this new method for viewing songs
+    static void ViewMySongs(SongService songService, ArtistService artistService, User currentUser)
     {
         Console.Clear();
-        Console.WriteLine("Registering a new artist...");
+        Console.WriteLine("╔══════════════════════════════════════════╗");
+        Console.WriteLine("║                   My Songs               ║");
+        Console.WriteLine("╚══════════════════════════════════════════╝");
+        
+        var artist = artistService.GetArtistByUserId(currentUser.UserId);
+        if (artist == null)
+        {
+            Console.WriteLine("Artist information not found!");
+            Console.ReadKey();
+            return;
+        }
 
+        var songs = songService.GetSongsByArtist(artist.ArtistId);
+        if (!songs.Any())
+        {
+            Console.WriteLine("You have no songs yet!");
+            Console.ReadKey();
+            return;
+        }
+
+        int currentSelection = 0;
+        ConsoleKey key;
+
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("╔══════════════════════════════════════════╗");
+            Console.WriteLine("║                   My Songs               ║");
+            Console.WriteLine("╚══════════════════════════════════════════╝");
+
+            // Định dạng bảng
+            string header = "╔══════════╦══════════════════════╦══════════════════════╦════════════╗";
+            string footer = "╚══════════╩══════════════════════╩══════════════════════╩════════════╝";
+
+            Console.WriteLine(header);
+            Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║", "Song ID", "Title", "Album", "Genre");
+            Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╬════════════╣");
+
+            for (int i = 0; i < songs.Count; i++)
+            {
+                var song = songs[i];
+                if (i == currentSelection)
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                Console.WriteLine("║ {0,-9}║ {1,-20} ║ {2,-20} ║ {3,-10} ║",
+                                songs[i].SongId.ToString().PadRight(9),
+                                Truncate(songs[i].Title, 20),
+                                Truncate(songs[i].Album, 20),
+                                Truncate(songs[i].Genre, 10));
+                
+                Console.ResetColor();
+            }
+
+            Console.WriteLine(footer);
+            Console.WriteLine("\nUse ↑↓ to navigate, Esc to go back");
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    if (currentSelection > 0) currentSelection--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (currentSelection < songs.Count - 1) currentSelection++;
+                    break;
+                case ConsoleKey.Escape:
+                    return;
+            }
+
+        } while (key != ConsoleKey.Enter);
+        Console.ReadKey();
+    }
+
+    static void RegisterArtist(ArtistService artistService, User currentUser)
+    {
+        if (artistService.IsArtistRegistered(currentUser.UserId))
+        {
+            Console.WriteLine("\nYou have already registered as an artist!");
+            Console.ReadKey();
+            return;
+        }
+
+        Console.Clear();
+        Console.WriteLine("╔══════════════════════════════════════════╗");
+        Console.WriteLine("║             Artist Registration          ║");
+        Console.WriteLine("╚══════════════════════════════════════════╝");
         string? name;
         do
         {
@@ -1036,231 +1141,710 @@ class Program
         DateTime birthDate;
         while (true)
         {
-        Console.Write("Enter birth date (YYYY-MM-DD): ");
-        string? input = Console.ReadLine();
-        if (DateTime.TryParse(input, out birthDate))
-        {
-            break;
-        }
-        Console.WriteLine("Invalid date format. Please enter again.");
+            Console.Write("Enter birth date (YYYY-MM-DD): ");
+            string? input = Console.ReadLine();
+            if (DateTime.TryParse(input, out birthDate))
+            {
+                break;
+            }
+            Console.WriteLine("Invalid date format. Please try again.");
         }
 
         string? topSong;
         do
         {
-            Console.Write("Enter top song: ");
+            Console.Write("Enter your top song: ");
             topSong = Console.ReadLine();
         } while (string.IsNullOrWhiteSpace(topSong));
 
-        artistService.RegisterArtist(name, birthDate, topSong);
-        Console.WriteLine("\nArtist registered successfully!");
+        if (artistService.RegisterArtist(name, birthDate, topSong, currentUser.UserId))
+        {
+            Console.WriteLine("\nArtist registered successfully!");
+        }
+        else
+        {
+            Console.WriteLine("\nFailed to register artist.");
+        }
         Console.ReadKey();
     }
 
     static void UploadSong(SongService songService)
     {
         Console.Clear();
+        Console.WriteLine("╔══════════════════════════════════════════╗");
+        Console.WriteLine("║                  Upload Song             ║");
+        Console.WriteLine("╚══════════════════════════════════════════╝");
 
-        string? title;
-        do
-        {
-            Console.Write("Enter title of song: ");
-            title = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(title));
-
-        int artistId;
+        // Title input
+        string title = "";
         while (true)
         {
-            Console.Write("Enter artistId of song: ");
-            if (int.TryParse(Console.ReadLine(), out artistId))
+            Console.Write("Enter title of song: ");
+            while (true)
             {
-                break;
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape) return;
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    if (!string.IsNullOrWhiteSpace(title)) break;
+                }
+                else if (key.Key == ConsoleKey.Backspace && title.Length > 0)
+                {
+                    title = title[..^1];
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    title += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
             }
-            Console.WriteLine("Invalid input. Enter artistId again.");
+            Console.WriteLine();
+            if (!string.IsNullOrWhiteSpace(title)) break;
         }
 
-        string? album;
-        do
+        // Artist name input
+        string artistName = "";
+        while (true)
+        {
+            Console.Write("Enter artist name: ");
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape) return;
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    if (!string.IsNullOrWhiteSpace(artistName)) break;
+                }
+                else if (key.Key == ConsoleKey.Backspace && artistName.Length > 0)
+                {
+                    artistName = artistName[..^1];
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    artistName += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
+            }
+            Console.WriteLine();
+            if (!string.IsNullOrWhiteSpace(artistName)) break;
+        }
+
+        // Album input
+        string album = "";
+        while (true)
         {
             Console.Write("Enter album of song: ");
-            album = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(album));
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape) return;
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    if (!string.IsNullOrWhiteSpace(album)) break;
+                }
+                else if (key.Key == ConsoleKey.Backspace && album.Length > 0)
+                {
+                    album = album[..^1];
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    album += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
+            }
+            Console.WriteLine();
+            if (!string.IsNullOrWhiteSpace(album)) break;
+        }
 
-        string? genre;
-        do
+        // Genre input
+        string genre = "";
+        while (true)
         {
             Console.Write("Enter genre of song: ");
-            genre = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(genre));
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape) return;
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    if (!string.IsNullOrWhiteSpace(genre)) break;
+                }
+                else if (key.Key == ConsoleKey.Backspace && genre.Length > 0)
+                {
+                    genre = genre[..^1];
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    genre += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
+            }
+            Console.WriteLine();
+            if (!string.IsNullOrWhiteSpace(genre)) break;
+        }
 
+        // Release date input
         DateTime releaseDate;
         while (true)
         {
             Console.Write("Enter release date (YYYY-MM-DD): ");
-            string? input = Console.ReadLine();
-            if (DateTime.TryParse(input, out releaseDate))
+            string input = "";
+            while (true)
             {
-                break;
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape) return;
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    if (!string.IsNullOrWhiteSpace(input)) break;
+                }
+                else if (key.Key == ConsoleKey.Backspace && input.Length > 0)
+                {
+                    input = input[..^1];
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    input += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
             }
+            Console.WriteLine();
+            
+            if (DateTime.TryParse(input, out releaseDate))
+                break;
+            
             Console.WriteLine("Invalid date format. Please enter again.");
         }
 
-        songService.UploadSong(title, artistId, album, genre, releaseDate);
-        Console.WriteLine("\nSong uploaded successfully!");
-        Console.ReadKey();
-    }
-
-    static void UploadPlaylist(PlaylistService playlistService)
-    {
-        Console.Clear();
-        Console.WriteLine("╔══════════════════════════════════╗");
-        Console.WriteLine("║         Upload Playlist          ║");
-        Console.WriteLine("╚══════════════════════════════════╝");
-
-        // Nhập tên playlist
-        string? playlistName;
-        do
+        if (songService.UploadSong(title, artistName, album, genre, releaseDate))
         {
-            Console.Write("Enter playlist name: ");
-            playlistName = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(playlistName));
-
-        // Danh sách các bài hát trong playlist
-        List<Song> songs = new List<Song>();
-
-        // Nhập các bài hát
-        bool addingSongs = true;
-        while (addingSongs)
-        {
-            Console.WriteLine("\nAdd a new song to the playlist:");
-
-            // Nhập thông tin bài hát
-            string? title;
-            do
-            {
-                Console.Write("Enter title of song: ");
-                title = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(title));
-
-            int artistId;
-            while (true)
-            {
-                Console.Write("Enter artistId of song: ");
-                if (int.TryParse(Console.ReadLine(), out artistId))
-                {
-                    break;
-                }
-                Console.WriteLine("Invalid input. Enter artistId again.");
-            }
-
-            string? album;
-            do
-            {
-                Console.Write("Enter album of song: ");
-                album = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(album));
-
-            string? genre;
-            do
-            {
-                Console.Write("Enter genre of song: ");
-                genre = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(genre));
-
-            DateTime releaseDate;
-            while (true)
-            {
-                Console.Write("Enter release date (YYYY-MM-DD): ");
-                string? input = Console.ReadLine();
-                if (DateTime.TryParse(input, out releaseDate))
-                {
-                    break;
-                }
-                Console.WriteLine("Invalid date format. Please enter again.");
-            }
-
-            // Tạo đối tượng Song và thêm vào danh sách
-            Song song = new Song(title, artistId, album, genre, releaseDate);
-            songs.Add(song);
-
-            // Hỏi người dùng có muốn thêm bài hát khác không
-            Console.Write("Do you want to add another song? (y/n): ");
-            string? addMore = Console.ReadLine();
-            if (addMore?.ToLower() != "y")
-            {
-                addingSongs = false;
-            }
-        }
-
-        // Gọi service để tạo playlist và thêm bài hát
-        bool result = playlistService.CreatePlaylist(playlistName, songs);
-
-        if (result)
-        {
-            Console.WriteLine("\nPlaylist uploaded successfully!");
+            Console.WriteLine("\nSong uploaded successfully!");
         }
         else
         {
-            Console.WriteLine("\nFailed to upload playlist.");
+            Console.WriteLine("\nFailed to upload song. Artist not found!");
         }
+        Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
     }
 
-    
-    static void ViewSongs()
+    static void DeleteSong(SongService songService, ArtistService artistService, User currentUser)
     {
-        SongService songService = new SongService();
+        Console.Clear();
+        Console.WriteLine("╔══════════════════════════════════════════╗");
+        Console.WriteLine("║               Delete Song                ║");
+        Console.WriteLine("╚══════════════════════════════════════════╝");
 
+        Console.WriteLine("Press Esc at any time to go back\n");
+        
+        // Get artist ID for current user
+        var artist = artistService.GetArtistByUserId(currentUser.UserId);
+        if (artist == null)
+        {
+            Console.WriteLine("Artist information not found!");
+            Console.ReadKey();
+            return;
+        }
+
+        // Get and display all songs by this artist
+        var songs = songService.GetSongsByArtist(artist.ArtistId);
+        if (!songs.Any())
+        {
+            Console.WriteLine("You have no songs to delete!");
+            Console.ReadKey();
+            return;
+        }
+
+        int currentSelection = 0;
+        ConsoleKey key;
+
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("╔══════════════════════════════════════════╗");
+            Console.WriteLine("║               Delete Song                ║");
+            Console.WriteLine("╚══════════════════════════════════════════╝");
+
+            // Định dạng bảng
+            string header = "╔══════════╦══════════════════════╦══════════════════════╦════════════╗";
+            string footer = "╚══════════╩══════════════════════╩══════════════════════╩════════════╝";
+
+            Console.WriteLine(header);
+            Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║", "Song ID", "Title", "Album", "Genre");
+            Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╬════════════╣");
+
+            for (int i = 0; i < songs.Count; i++)
+            {
+                var song = songs[i];
+                if (i == currentSelection)
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                Console.WriteLine("║ {0,-9}║ {1,-20} ║ {2,-20} ║ {3,-10} ║",
+                                songs[i].SongId.ToString().PadRight(9),
+                                Truncate(songs[i].Title, 20),
+                                Truncate(songs[i].Album, 20),
+                                Truncate(songs[i].Genre, 10));
+
+                Console.ResetColor();
+            }
+
+            Console.WriteLine(footer);
+            Console.WriteLine("\nUse ↑↓ to navigate, Enter to select, Esc to cancel");
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    if (currentSelection > 0) currentSelection--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (currentSelection < songs.Count - 1) currentSelection++;
+                    break;
+                case ConsoleKey.Escape:
+                    return;
+            }
+
+        } while (key != ConsoleKey.Enter);
+
+        // Confirm deletion
+        var selectedSong = songs[currentSelection];
+        Console.Clear();
+        Console.WriteLine($"\nAre you sure you want to delete '{selectedSong.Title}'?");
+        Console.WriteLine("Press Enter to confirm, any other key to cancel...");
+
+        if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+        {
+            if (songService.DeleteSong(selectedSong.SongId, artist.ArtistId))
+            {
+                Console.WriteLine("\nSong deleted successfully!");
+            }
+            else
+            {
+                Console.WriteLine("\nFailed to delete song. Make sure you own this song.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("\nDeletion cancelled.");
+        }
+        
+        Console.WriteLine("\nPress any key to continue...");
+        Console.ReadKey();
+    }
+
+
+    static void ShowListenerMenu(User user)
+    {
+        bool running = true;
+        string[] options = { 
+            "Browse Songs",
+            "My Playlists",
+            "Create Playlist",
+            "Delete Playlist",
+            "Logout"
+        };
+
+        SongService songService = new();
+        PlaylistService playlistService = new();
+
+        while(running)
+        {
+            int choice = ShowMenu("Listener Menu", options, user.UserName);
+            switch(choice)
+            {
+                case 1:
+                    BrowseSongs(songService, playlistService, user);
+                    break;
+                case 2:
+                    ViewMyPlaylists(playlistService, songService, user);
+                    break;
+                case 3:
+                    CreatePlaylist(playlistService, user);
+                    break;
+                case 4:
+                    DeletePlaylistById(playlistService, user);
+                    break;
+                case 5:
+                    running = false;
+                    break;
+                default:
+                    Console.WriteLine("Invalid option!");
+                    Console.ReadKey();
+                    break;
+            }
+        }
+    }
+
+    static void BrowseSongs(SongService songService, PlaylistService playlistService, User user)
+    {
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("╔══════════════════════════════════╗");
-            Console.WriteLine("║      View Artist's Songs         ║");
-            Console.WriteLine("╚══════════════════════════════════╝");
+            var songs = songService.GetAllSongs();
+            if (!songs.Any())
+            {
+                Console.WriteLine("No songs available!");
+                Console.ReadKey();
+                return;
+            }
 
-            // Nhập Artist ID
-            int artistId;
+            int currentSelection = 0;
+            int currentPage = 0;
+            int itemsPerPage = 10;
+            int totalPages = (int)Math.Ceiling(songs.Count / (double)itemsPerPage);
+            ConsoleKey key;
+
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("╔══════════════════════════════════════════╗");
+                Console.WriteLine("║               Songs List                 ║");
+                Console.WriteLine("╚══════════════════════════════════════════╝");
+                
+                string header = "╔══════════╦══════════════════════╦══════════════════════╦════════════╗";
+                string footer = "╚══════════╩══════════════════════╩══════════════════════╩════════════╝";
+
+                Console.WriteLine(header);
+                Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║ {3,-10} ║", "Song ID", "Title", "Album", "Genre");
+                Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╬════════════╣");
+
+                // Display current page items
+                var pageItems = songs.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
+                for (int i = 0; i < pageItems.Count; i++)
+                {
+                    var song = songs[i];
+
+                    if (i == currentSelection)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    Console.WriteLine("║ {0,-9}║ {1,-20} ║ {2,-20} ║ {3,-10} ║",
+                                songs[i].SongId.ToString().PadRight(9),
+                                Truncate(songs[i].Title, 20),
+                                Truncate(songs[i].Album, 20),
+                                Truncate(songs[i].Genre, 10));
+
+                    Console.ResetColor();
+                }
+
+                Console.WriteLine(footer);
+                Console.WriteLine($"\nPage {currentPage + 1}/{totalPages}");
+                Console.WriteLine("\nUse ↑↓ to navigate songs, ←→ to change pages, Enter to select, Esc to go back");
+
+                key = Console.ReadKey(true).Key;
+
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        if (currentSelection > 0) currentSelection--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (currentSelection < pageItems.Count - 1) currentSelection++;
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        if (currentPage > 0)
+                        {
+                            currentPage--;
+                            currentSelection = 0;
+                        }
+                        break;
+                    case ConsoleKey.RightArrow:
+                        if (currentPage < totalPages - 1)
+                        {
+                            currentPage++;
+                            currentSelection = 0;
+                        }
+                        break;
+                }
+            } while (key != ConsoleKey.Enter && key != ConsoleKey.Escape);
+
+            if (key == ConsoleKey.Escape) return;
+
+            // After selecting a song, show options
+            var selectedSong = songs[currentSelection];
+            string[] options = { "Add to Playlist", "Back" };
+            int optionSelection = 0;
+
             while (true)
             {
-                Console.Write("Enter Artist ID (0 to exit): ");
-                string input = Console.ReadLine()?.Trim();
+                Console.Clear();
+                Console.WriteLine($"\nSelected Song: {selectedSong.Title} by {selectedSong.ArtistName}\n");
+                Console.WriteLine("Please choose an option:\n");
 
-                if (input == "0") return; // Thoát nếu nhập 0
-
-                if (int.TryParse(input, out artistId) && artistId > 0)
+                for (int i = 0; i < options.Length; i++)
                 {
-                    break;
+                    if (i == optionSelection)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    
+                    Console.WriteLine($"{(i == optionSelection ? "► " : "  ")}{options[i]}");
+                    
+                    Console.ResetColor();
                 }
 
-                Console.WriteLine("Invalid input! Please enter a valid Artist ID.");
-            }
+                key = Console.ReadKey(true).Key;
 
-            // Lấy danh sách bài hát
-            try
-            {
-                List<Song> songs = songService.GetSongByArtistId(artistId);
-
-                // Hiển thị kết quả
-                if (songs == null || songs.Count == 0)
+                switch (key)
                 {
-                    Console.WriteLine("\nNo songs found for this artist.");
-                }
-                else
-                {
-                    Console.WriteLine("╔══════════════════════════════════╗");
-                    Console.WriteLine("║              Song List           ║");
-                    Console.WriteLine("╚══════════════════════════════════╝");
-                    PrintSongTable(songs);
+                    case ConsoleKey.UpArrow:
+                        if (optionSelection > 0) optionSelection--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (optionSelection < options.Length - 1) optionSelection++;
+                        break;
+                    case ConsoleKey.Enter:
+                        switch (optionSelection)
+                        {
+                            case 0: // Add to Playlist
+                                var playlists = playlistService.GetUserPlaylists(user.UserId);
+                                DisplayPlaylists(playlists);
+                                Console.Write("\nEnter Playlist ID: ");
+                                if (int.TryParse(Console.ReadLine(), out int playlistId))
+                                {
+                                    playlistService.AddSongToPlaylist(playlistId, selectedSong.SongId);
+                                    Console.WriteLine("\nSong added to playlist!");
+                                    Console.ReadKey();
+                                }
+                                break;
+                            case 1: // Back
+                                return;
+                        }
+                        break;
+                    case ConsoleKey.Escape:
+                        return;
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"\nError fetching songs: {ex.Message}");
-            }
-
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
         }
+    }
+
+    static void ViewMyPlaylists(PlaylistService playlistService, SongService songService, User user)
+    {
+        while (true)
+        {
+            Console.Clear();
+            var playlists = playlistService.GetUserPlaylists(user.UserId);
+            if (!playlists.Any())
+            {
+                Console.WriteLine("You don't have any playlists yet!");
+                Console.ReadKey();
+                return;
+            }
+
+            int currentSelection = 0;
+            ConsoleKey key;
+
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("╔══════════════════════════════════════════╗");
+                Console.WriteLine("║               Your Playlists             ║");
+                Console.WriteLine("╚══════════════════════════════════════════╝");
+                
+                string header = "╔══════════╦══════════════════════╦══════════════════════╗";
+                string footer = "╚══════════╩══════════════════════╩══════════════════════╝";
+
+                Console.WriteLine(header);
+                Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║", "ID", "Name", "Created Date");
+                Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╣");
+                
+                for (int i = 0; i < playlists.Count; i++)
+                {
+                    var playlist = playlists[i];
+                    if (i == currentSelection)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    Console.WriteLine("║ {0,-8}║ {1,-20} ║ {2,-20} ║",
+                                playlists[i].PlaylistId.ToString().PadRight(9),
+                                Truncate(playlists[i].PlaylistName, 20),
+                                Truncate(playlists[i].CreatedAt.ToString("yyyy-MM-dd"), 20));
+
+                    Console.ResetColor();
+                }
+
+                Console.WriteLine(footer);
+                Console.WriteLine("\nUse ↑↓ to navigate, Enter to select, Esc to go back");
+
+                key = Console.ReadKey(true).Key;
+
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        if (currentSelection > 0) currentSelection--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (currentSelection < playlists.Count - 1) currentSelection++;
+                        break;
+                }
+            } while (key != ConsoleKey.Enter && key != ConsoleKey.Escape);
+
+            if (key == ConsoleKey.Escape) return;
+
+            // After selecting a playlist, show songs and options
+            var selectedPlaylist = playlists[currentSelection];
+            var songs = songService.GetPlaylistSongs(selectedPlaylist.PlaylistId);
+            string[] options = { "Remove Song", "Back" };
+            int optionSelection = 0;
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine($"\nSelected Playlist: {selectedPlaylist.PlaylistName}\n");
+                PrintSongTable(songs);
+                Console.WriteLine("\nPlease choose an option:");
+
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == optionSelection)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    
+                    Console.WriteLine($"{(i == optionSelection ? "► " : "  ")}{options[i]}");
+                    
+                    Console.ResetColor();
+                }
+
+                key = Console.ReadKey(true).Key;
+
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        if (optionSelection > 0) optionSelection--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (optionSelection < options.Length - 1) optionSelection++;
+                        break;
+                    case ConsoleKey.Enter:
+                        switch (optionSelection)
+                        {
+                            case 0: // Remove Song
+                                Console.Write("\nEnter Song ID to remove: ");
+                                if (int.TryParse(Console.ReadLine(), out int songId))
+                                {
+                                    playlistService.RemoveSongFromPlaylist(selectedPlaylist.PlaylistId, songId);
+                                    Console.WriteLine("Song removed from playlist!");
+                                    Console.ReadKey();
+                                    songs = songService.GetPlaylistSongs(selectedPlaylist.PlaylistId);
+                                }
+                                break;
+                            case 1: // Back
+                                return;
+                        }
+                        break;
+                    case ConsoleKey.Escape:
+                        return;
+                }
+            }
+        }
+    }
+
+    static void CreatePlaylist(PlaylistService playlistService, User user)
+    {
+        Console.Clear();
+        Console.WriteLine("╔══════════════════════════════════════════╗");
+        Console.WriteLine("║             Create New Playlist          ║");
+        Console.WriteLine("╚══════════════════════════════════════════╝");
+
+        string? name;
+        do
+        {
+            System.Console.Write("Enter Playlist name: ");
+            name = Console.ReadLine()?.Trim();
+        } while (string.IsNullOrWhiteSpace(name));
+
+        playlistService.CreatePlaylist(name, user.UserId);
+        System.Console.WriteLine("Playlist created successfully!");
+        ConsoleKey key = Console.ReadKey(true).Key;
+        if (key == ConsoleKey.Escape || key == ConsoleKey.Enter)
+        {
+            return;
+        }
+    }
+
+    static void DeletePlaylistById(PlaylistService playlistService, User user)
+    {
+        Console.Clear();
+        var playlists = playlistService.GetUserPlaylists(user.UserId);
+
+        if (playlists.Count == 0)
+        {  
+            Console.WriteLine("You do not any playlists.");
+            Console.ReadKey();
+            return;
+        }
+
+        DisplayPlaylists(playlists);
+    
+        Console.Write("\nEnter Playlist ID to delete: ");
+        string input = Console.ReadLine();
+
+        if (input.ToLower() == "exit" || input == null){
+            return;
+        }
+    
+        if (int.TryParse(input, out int playlistId))
+        {
+            var songs = songService.GetPlaylistSongs(playlistId); // Lấy bài hát bằng ID
+        
+            Console.Clear();
+            PrintSongTable(songs);
+
+            Console.Write("❓ Are you sure you want to delete this song? (Y/N): ");
+            string confirm = Console.ReadLine()?.Trim().ToLower();
+
+            if (confirm != "y")
+            {
+                Console.WriteLine("🚫 Delete canceled.");
+                Console.ReadKey();
+                return;
+            }
+        }
+        else
+        {
+            Console.WriteLine("\nInvalid Playlist ID. Please enter a number.");
+        }
+
+        Console.ReadKey();
+    }
+
+
+    static void DisplayPlaylists(List<Playlist> playlists)
+    {
+        Console.WriteLine("╔══════════════════════════════════════════╗");
+        Console.WriteLine("║              Your Playlists              ║");
+        Console.WriteLine("╚══════════════════════════════════════════╝");
+    
+        string header = "╔══════════╦══════════════════════╦══════════════════════╗";
+        string footer = "╚══════════╩══════════════════════╩══════════════════════╝";
+
+                Console.WriteLine(header);
+                Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║", "ID", "Name", "Created Date");
+                Console.WriteLine("╠══════════╬══════════════════════╬══════════════════════╣");
+        
+        foreach (var playlist in playlists)
+        {
+            int id = playlist.PlaylistId;
+            string name = playlist.PlaylistName;
+            string date = playlist.CreatedAt.ToString("yyyy-MM-dd");
+            Console.WriteLine("║ {0,-8} ║ {1,-20} ║ {2,-20} ║", id, name, date);
+        }        
+        Console.WriteLine(footer);
     }
 
     static void PrintSongTable(List<Song> songs)
@@ -1293,25 +1877,5 @@ class Program
             : value.Length <= maxLength 
             ? value 
             : value.Substring(0, maxLength - 3) + "...";
-    }
-
-
-    static void ShowListenerMenu(User user)
-    {
-        bool running = true;
-        string[] options = { "Browse Songs", "My Playlists", "Logout" };
-
-        while(running)
-        {
-            int choice = ShowMenu("Listener Menu", options, user.UserName);
-            switch(choice)
-            {
-                case 3: running = false; break;
-                default:
-                    Console.WriteLine("Feature coming soon!");
-                    Console.ReadKey();
-                    break;
-            }
-        }
     }
 }

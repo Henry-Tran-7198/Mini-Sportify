@@ -7,13 +7,16 @@ public class Artist
     public DateTime? BirthDate { get; set; }
     public string TopSong { get; set; } = string.Empty;
     
+    public int UserId { get; set; }
     public Artist() { }
 
-    public Artist(string artistName, DateTime? birthDate, string topSong)
+    public Artist(string artistName, DateTime? birthDate, string topSong, int userId)
     {
         ArtistName = artistName;
         BirthDate = birthDate;
         TopSong = topSong;
+        UserId = userId;
+
     }
 
     public override string ToString()

@@ -1,0 +1,5 @@
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/obj/Debug/net8.0/Mini-Sportify.GeneratedMSBuildEditorConfig.editorconfig
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/obj/Debug/net8.0/Mini-Sportify.AssemblyInfoInputs.cache
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/obj/Debug/net8.0/Mini-Sportify.AssemblyInfo.cs
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/obj/Debug/net8.0/Mini-Sportify.csproj.CoreCompileInputs.cache
+/Users/duongmacbook/Documents/Mini-Sportify/Mini-Sportify/obj/Debug/net8.0/Mini-Sportify.sourcelink.json

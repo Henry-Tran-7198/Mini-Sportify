@@ -81,6 +81,28 @@ public class UserDAL
         }
     }
 
+    public bool CheckUserNameExists(string userName)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var command = new MySqlCommand("SELECT COUNT(*) FROM users WHERE userName = @userName", connection);
+        command.Parameters.AddWithValue("@userName", userName);
+
+        return Convert.ToInt32(command.ExecuteScalar()) > 0;
+    }
+
+    public bool CheckUserEmailExists(string userEmail)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var command = new MySqlCommand("SELECT COUNT(*) FROM users WHERE userEmail = @userEmail", connection);
+        command.Parameters.AddWithValue("@userEmail", userEmail);
+
+        return Convert.ToInt32(command.ExecuteScalar()) > 0;
+    }
+
     public User ? GetUserById(int userId)
     {
         using var connection = new MySqlConnection(connectionString);
@@ -101,7 +123,7 @@ public class UserDAL
                     UserName = reader.GetString("userName"),
                     UserEmail = reader.GetString("userEmail"),
                     UserPassword = reader.GetString("userPassword"),
-                    Roles = reader.GetString("roles")
+                    Roles = reader.GetString("roles"),
                 };
             }
         }

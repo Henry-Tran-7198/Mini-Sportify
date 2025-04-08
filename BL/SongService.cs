@@ -1,25 +1,47 @@
 using System;
-using System.Collections.Generic;
 using DAL;
-using Persistence; // 🔥 Thêm dòng này để nhận diện Song
+using Persistence;
+using Persistence.Models;
 
 namespace BL
 {
     public class SongService
     {
-        private SongDAL songDAL = new SongDAL();
+        private readonly SongDAL songDAL = new SongDAL();
+        private readonly ArtistDAL artistDAL = new ArtistDAL();
 
-        public void UploadSong(string title, int artistId, string album, string genre, DateTime releaseDate)
+        public bool UploadSong(string title, string artistName, string album, string genre, DateTime releaseDate)
         {
-            songDAL.AddSong(title, artistId, album, genre, releaseDate);
+            // Get artist by name
+            var artist = artistDAL.GetArtistByName(artistName);
+            if (artist == null)
+                return false;
+
+            // Upload song with found artist ID
+            songDAL.AddSong(title, artist.ArtistId, album, genre, releaseDate);
+            return true;
         }
 
-        public List<Song> GetSongByArtistId(int artistId)
+        public List<Song> GetSongsByArtist(int artistId)
         {
-            return songDAL.GetSongsByArtistId(artistId); 
+            return songDAL.GetSongsByArtist(artistId);
         }
 
-        public Song? SearchSong(int songId)
+        public bool DeleteSong(int songId, int artistId)
+        {
+            return songDAL.DeleteSong(songId, artistId);
+        }
+        public List<Song> GetAllSongs()
+        {
+            return songDAL.GetAllSongs();
+        }
+
+        public List<Song> GetPlaylistSongs(int playlistId)
+        {
+            return songDAL.GetPlaylistSongs(playlistId);
+        }
+
+        public Song ? SearchSong(int songId)
         {
             if (songId <= 0)
             {
@@ -27,34 +49,13 @@ namespace BL
                 return null;
             }
 
-            var song = songDAL.GetSongById(songId); 
+            var song = songDAL.GetSongById(songId);
 
-            if (song == null)
+            if (songId == null)
             {
                 Console.WriteLine("❌ Song not found.");
             }
             return song;
-        }
-
-        public bool DeleteSong(int songId)
-        {
-            SongDAL songDAL = new SongDAL(); //Tạo 1 đối tượng SongDAL để làm việc với database
-            bool isDeleted = songDAL.DeleteSongById(songId); //Gọi phương thức DeleteSongById trong songId
-
-            if (isDeleted)
-            {
-                return true;
-            }
-            else
-            {
-                System.Console.WriteLine("❌ User not found!");
-                return false;
-            }
-        }
-
-        public List<Song> GetAllSongs()
-        {
-            return songDAL.GetAllSongs();  
         }
     }
 }

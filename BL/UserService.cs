@@ -31,6 +31,17 @@ public class UserService
 
     public bool SignUp(string userName, string email, string password, string role)
     {
+        if (_userDAL.CheckUserNameExists(userName))
+        {
+            System.Console.WriteLine("Name already exists!");
+            return false;
+        }
+        else if (_userDAL.CheckUserEmailExists(email))
+        {
+            System.Console.WriteLine("Email already exists!");
+            return false;
+        }
+
         if (string.IsNullOrEmpty(userName) || !IsValidEmail(email) || 
             !IsValidPassword(password) || string.IsNullOrEmpty(role))
             return false;
@@ -39,7 +50,18 @@ public class UserService
         return _userDAL.SignUp(user);
     }
 
-    public User? SearchUser(int userId)
+    public bool CheckUserNameExists(string userName)
+    {
+        return _userDAL.CheckUserNameExists(userName);
+    }
+
+    public bool CheckUserEmailExists(string email)
+    {
+        return _userDAL.CheckUserEmailExists(email);
+    }
+
+
+     public User? SearchUser(int userId)
     {
         if (userId <= 0)
         {
@@ -55,7 +77,7 @@ public class UserService
 
         return user;
     }
-    
+
     public bool DeleteUser(int userId)
     {
         UserDAL userDAL = new UserDAL(); //Tạo 1 đối tượng UserDAL để làm việc với database
