@@ -178,38 +178,82 @@ class Program
             Console.WriteLine("╚════════════════╝");
 
             // Username input
-            Console.Write("Username: ");
             string userName = "";
-            while (true)
+            bool isValidUsername = false;
+            
+            while (!isValidUsername)
             {
-                var key = Console.ReadKey(true);
-                if (key.Key == ConsoleKey.Escape)
-                    return;
-                if (key.Key == ConsoleKey.Enter && userName.Length > 0)
-                    break;
-                if (key.Key == ConsoleKey.Backspace && userName.Length > 0)
+                // Reset cursor position for username input
+                Console.SetCursorPosition(0, 3);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, 3);
+                
+                Console.Write("Username: ");
+                userName = "";
+                int cursorLeft = "Username: ".Length;
+                Console.SetCursorPosition(cursorLeft, Console.CursorTop);
+                
+                while (true)
                 {
-                    userName = userName[..^1];
-                    Console.Write("\b \b");
+                    var key = Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Escape)
+                        return;
+                    if (key.Key == ConsoleKey.Enter && userName.Length > 0)
+                        break;
+                    if (key.Key == ConsoleKey.Backspace && userName.Length > 0)
+                    {
+                        userName = userName[..^1];
+                        Console.Write("\b \b");
+                    }
+                    else if (!char.IsControl(key.KeyChar))
+                    {
+                        userName += key.KeyChar;
+                        Console.Write(key.KeyChar);
+                    }
                 }
-                else if (!char.IsControl(key.KeyChar))
+                Console.WriteLine();
+                
+                // Check if username exists - clear any previous messages
+                if (userService.CheckUserNameExists(userName))
                 {
-                    userName += key.KeyChar;
-                    Console.Write(key.KeyChar);
+                    // Display the error message
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Username already exists! Please try a different one.");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to try again...");
+                    Console.ReadKey(true);
+                    
+                    // Clear all lines including the error message
+                    Console.SetCursorPosition(0, 3);  // Go back to username line
+                    Console.Write(new string(' ', Console.WindowWidth));  // Clear username line
+                    Console.SetCursorPosition(0, 4);  // Go to first error message line
+                    Console.Write(new string(' ', Console.WindowWidth));  // Clear first error message
+                    Console.SetCursorPosition(0, 5);  // Go to second error message line
+                    Console.Write(new string(' ', Console.WindowWidth));  // Clear second error message
+                    
+                    // We don't need to reset the cursor position here since the loop will set it back to line 3
+                }
+                else
+                {
+                    isValidUsername = true;
                 }
             }
-            Console.WriteLine();
 
-            // Email input
-            Console.Write("Email: ");
+            // Email input 
             string email = "";
             bool isValidEmail = false;
+            
             while (!isValidEmail)
             {
+                // Reset cursor position for email input
+                Console.SetCursorPosition(0, 4);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, 4);
+                
+                Console.Write("Email: ");
                 email = "";
-                Console.SetCursorPosition("Email: ".Length, Console.CursorTop);
-                Console.Write(new string(' ', 50)); // Clear previous input
-                Console.SetCursorPosition("Email: ".Length, Console.CursorTop);
+                int cursorLeft = "Email: ".Length;
+                Console.SetCursorPosition(cursorLeft, Console.CursorTop);
                 
                 while (true)
                 {
@@ -229,27 +273,55 @@ class Program
                         Console.Write(key.KeyChar);
                     }
                 }
+                Console.WriteLine();
                 
-                // Validate email format using regex
-                isValidEmail = userService.IsValidEmail(email);
-                
-                if (!isValidEmail)
+                // Check email format and existence - clear any previous messages
+                if (!userService.IsValidEmail(email))
                 {
-                    Console.WriteLine("\nInvalid email format. Please try again.");
-                    Console.Write("Email: ");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid email format. Please try again.");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to try again...");
+                    Console.ReadKey(true);
+                    Console.SetCursorPosition(0, 5);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, 6);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, 5);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    continue;
+                }
+                
+                if (userService.CheckUserEmailExists(email))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Email already exists! Please try a different one.");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to try again...");
+                    Console.ReadKey(true);
+                    Console.SetCursorPosition(0, 5);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, 6);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, 5);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                }
+                else
+                {
+                    isValidEmail = true;
                 }
             }
-            Console.WriteLine();
 
             // Password input
+            Console.SetCursorPosition(0, 5);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, 5);
             Console.Write("Password: ");
             string? password = GetMaskedInput(true);
             if (password == null)
                 return;
 
-            Console.WriteLine();
-
-            // Role selection
+            // Role selection after validating all inputs
             Console.Clear();
             Console.WriteLine("╔════════════════╗");
             Console.WriteLine("║    Sign Up     ║");
@@ -258,11 +330,12 @@ class Program
             Console.WriteLine($"Email: {email}");
             Console.WriteLine($"Password: {"*".PadRight(password.Length, '*')}");
 
-            // Role selection sử dụng ShowMenu
+            // Role selection using ShowMenu
             string[] roleOptions = { "Listener", "Artist" };
             int roleChoice = ShowMenu("Select Role", roleOptions);
             string role = (roleChoice == 1) ? "listener" : "artist";
 
+            // Complete sign up
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
             {
                 if (userService.SignUp(userName, email, password, role))
@@ -271,7 +344,7 @@ class Program
                 }
                 else
                 {
-                    Console.WriteLine("\nSign up failed! Email might already be in use.");
+                    Console.WriteLine("\nSign up failed! An unexpected error occurred.");
                 }
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey(true);
