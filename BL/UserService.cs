@@ -14,9 +14,17 @@ public class UserService
     }
 
     /// Kiểm tra email có đúng định dạng không
-    public bool IsValidEmail(string email){
-        return _userDAL.IsValidEmail(email);
+    public bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+            
+        // Sử dụng Regex để kiểm tra định dạng email
+        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        return Regex.IsMatch(email, pattern);
     }
+
+    
 
 
     /// Đăng nhập người dùng
@@ -74,24 +82,6 @@ public class UserService
         return _userDAL.CheckUserEmailExists(email);
     }
 
-    /// Lấy thông tin người dùng theo ID
-    public User? GetUserById(int userId)
-    {
-        if (userId <= 0)
-        {
-            Console.WriteLine("❌ Invalid ID. Please enter a valid number.");
-            return null;
-        }
-
-        var user = _userDAL.GetUserById(userId);
-        if (user == null)
-        {
-            Console.WriteLine("❌ User not found.");
-        }
-
-        return user;
-    }
-
     /// Tìm kiếm người dùng theo từ khóa
     public List<User> AdminSearchUsers(string keyword)
     {
@@ -100,7 +90,7 @@ public class UserService
             return new List<User>();
         }
         
-        return _userDAL.AdminSearchUsers(keyword);
+        return _userDAL.SearchUsers(keyword);
     }
 
     /// Xóa người dùng theo ID
@@ -112,7 +102,7 @@ public class UserService
             return false;
         }
         
-        return _userDAL.AdminDeleteUser(userId);
+        return _userDAL.DeleteUser(userId);
     }
 
     /// Lấy tất cả người dùng

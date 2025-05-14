@@ -44,3 +44,4 @@ C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\Project1
 C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\Project1\ConsoleAppPL\obj\Debug\net8.0\ConsoleAppPL.pdb
 C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\Project1\ConsoleAppPL\obj\Debug\net8.0\ConsoleAppPL.genruntimeconfig.cache
 C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\Project1\ConsoleAppPL\obj\Debug\net8.0\ref\ConsoleAppPL.dll
+C:\Users\LOQ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VTCA\Project1\ConsoleAppPL\obj\Debug\net8.0\ConsoleAppPL.sourcelink.json
